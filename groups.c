@@ -60,6 +60,7 @@ char* getGroupsLines(char * name) {
 					k++;
 				}
 				if (k == NAMELENGTH) {
+					printf("found name at position: %d\n", i);
 					//if it gets all chars right
 					namefound = 1;
 				}
@@ -107,10 +108,41 @@ char* getGroupsLines(char * name) {
 	return groups;
 }
 
-int main() {
+int checkForName(char* name) {
+	int fd;
+	fd = open("/etc/group", O_RDONLY);
 
-	char* groups = getGroupsLines("robou");
-	printf("%s\n", groups);
+	char buffer[2000];
+	int rd = read(fd, buffer, 2000);
+	int i = 0, j = 0, length;
+	while (name[i] != 0) {
+		i++;
+	}
+	length = i;
 
+	i = 0;
+	while (i < rd) {
+		int k = 0;
+		while (buffer[i] == name[k]) {
+			//compare buffer to name 1 char at a time
+			i++;
+			k++;
+		}
+		if (k == length) {
+			printf("found name at position: %d\n", i);
+			//if it gets all chars right
+			return 1;
+		}
+		i++;
+	}
+	return 0;
+}
+
+
+int main(int argc, char* argv) {
+	// printf("%s\n", argv[1]);
+	// char* groups = getGroupsLines("robou");
+	// printf("%s\n", groups);
+	printf("%d\n", checkForName("beans"));
 	return 0;
 }
