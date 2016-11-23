@@ -1,3 +1,7 @@
+// #This code was written by Robin Diddams, Nils Steinbugl, Chiara Piazzolla, and Rachel Lewis
+// #nobody cheated
+// #CSI-230-03
+// #this is tested and works on archlinux(native)
 #include <stdio.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -5,7 +9,7 @@
 #include <grp.h>
 #include <time.h>
 #include <pwd.h>
-
+#include <stdlib.h>
 
 void longFormat (char* name, const char* path) {
 	struct stat fileInfo;
@@ -13,45 +17,7 @@ void longFormat (char* name, const char* path) {
 	sprintf(appendedPath, "%s/%s", path, name);
 	stat(appendedPath, &fileInfo);
 
-	printf( (S_ISDIR(fileInfo.st_mode)) ? "d" : "-");
-	printf( (fileInfo.st_mode & S_IRUSR) ? "r" : "-");
-	printf( (fileInfo.st_mode & S_IWUSR) ? "w" : "-");
-	printf( (fileInfo.st_mode & S_IXUSR) ? "x" : "-");
-	printf( (fileInfo.st_mode & S_IRGRP) ? "r" : "-");
-	printf( (fileInfo.st_mode & S_IWGRP) ? "w" : "-");
-	printf( (fileInfo.st_mode & S_IXGRP) ? "x" : "-");
-	printf( (fileInfo.st_mode & S_IROTH) ? "r" : "-");
-	printf( (fileInfo.st_mode & S_IWOTH) ? "w" : "-");
-	printf( (fileInfo.st_mode & S_IXOTH) ? "x" : "-");
-
-	printf(" %d", fileInfo.st_nlink);
-
-
-	struct passwd *pwd;
-	if ((pwd = getpwuid(fileInfo.st_uid)) != NULL);
-		printf(" %s", pwd->pw_name);
-
-	struct group *grp;
-	if ((grp = getgrgid(fileInfo.st_gid)) != NULL)
-		printf(" %s", grp->gr_name);
-	// printf(" %d", group);
-
-	printf(" %d", fileInfo.st_size);
-
-	struct tm ts;
-	ts = *localtime(&fileInfo.st_mtime);
-	char theTime[80];
-	strftime(theTime, sizeof(theTime), "%b %d %H:%M", &ts);
-	printf(" %s", theTime);
-	printf(" %s\n", name);
-}
-
-void longFormatLA (char* name, const char* path) {
-	struct stat fileInfo;
-	char appendedPath[512];
-	sprintf(appendedPath, "%s/%s", path, name);
-	stat(appendedPath, &fileInfo);
-
+	//thanks stack exchange
 	printf( (S_ISDIR(fileInfo.st_mode)) ? "d" : "-");
 	printf( (fileInfo.st_mode & S_IRUSR) ? "r" : "-");
 	printf( (fileInfo.st_mode & S_IWUSR) ? "w" : "-");
@@ -86,12 +52,13 @@ void longFormatLA (char* name, const char* path) {
 }
 
 void lsfunc(int ls, int lsa, int lsl, int lsla, const char* path) {
-	printf("%d %d %d %d %s\n",ls, lsa, lsl, lsla, path);
+	// printf("%d %d %d %d %s\n",ls, lsa, lsl, lsla, path);
 	struct dirent * dp;
 
 	DIR* dirp = opendir(path);
 	if (dirp == NULL) {
-		printf("error finding path\n");
+		printf("ls: cannot access '%s': No such file or directory\n", path);
+		exit(1);
 	}
 	// dp = readdir(dirp);
 
@@ -181,6 +148,14 @@ int main(int argc, char* argv[]) {
 		lsa = 1;
 	} else if (!l && !a) {
 		ls = 1;
+	}
+
+	//lets check if its a file
+	struct stat file;
+	stat(path, &file);
+	if (S_ISREG(file.st_mode)) {
+		printf("%s\n", path);
+		exit(0);
 	}
 
 	lsfunc(ls, lsa, lsl, lsla, path);
