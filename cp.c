@@ -1,3 +1,7 @@
+// #This code was written by Robin Diddams, Nils Steinbugl, Chiara Piazzolla, and Rachel Lewis
+// #nobody cheated
+// #CSI-230-03
+// this was tested and works on ubuntu(64bit-native), and probably linux mint :/
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -72,11 +76,13 @@ int cp(const char* original, const char* predestination) {
   fdo = open(original, O_RDONLY);
   if (fdo < 0) {
     printf("Error! Cannot open %s\n", original);
+    perror("Error");
     return 1;
   }
   fdd = open(postdestination, O_WRONLY | O_CREAT, 0777);
   if (fdd < 0) {
     printf("Error! cannot open %s\n", postdestination);
+    perror("Error");
     return 1;
   }
 
@@ -237,11 +243,17 @@ int main (int argc, char* argv[]) {
 
       //if we made it here then we are good to go!
       // printf("%s, %s\n", from, to);
+      int status = 0;
       if (r) {
-        printf("%d", cpr(from, to));
+        status = cpr(from, to);
+        if (status == 1) {
+          // printf("%d", status);
+        }
       } else {
-        printf("%d", cp(from, to));
-        // cp(to, from);
+        status = cp(from, to);
+        if (status == 1) {
+          // printf("%d", status);
+        }
       }
 
     } else {

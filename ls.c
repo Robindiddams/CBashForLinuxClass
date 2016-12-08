@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 void longFormat (char* name, const char* path) {
+	//ls -a
 	struct stat fileInfo;
 	char appendedPath[512];
 	sprintf(appendedPath, "%s/%s", path, name);
@@ -94,6 +95,7 @@ int main(int argc, char* argv[]) {
 	// const char* path = "./";
 	char buffer[256];
 
+	//c bools, or "ints" as I call them
 	int ls = 0;
 	int lsa = 0;
 	int lsl = 0;
@@ -104,6 +106,7 @@ int main(int argc, char* argv[]) {
 	int p = 0;
 
 
+	//parse arguments for options and a path
 	if (argc > 1) {
 		// printf("argc: %d\n", argc);
 		int i = 1;
@@ -127,6 +130,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	//create path
 	char* path;
 	if (p == 1) {
 		path = buffer;
@@ -135,13 +139,11 @@ int main(int argc, char* argv[]) {
 		// printf("no path given\n");
 		path = "./";
 	}
-	// printf("%s\n", buffer);
 
-	// printf("%d %d %s\n", l, a,  path);
 
+	//create option flags
 	if (l && a) {
 		lsla = 1;
-		// printf("no \n");
 	} else if (l) {
 		lsl = 1;
 	} else if (a) {
